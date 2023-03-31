@@ -1,0 +1,97 @@
+// colors
+$scarlet: #fff0f0
+$light-grey: #404749
+$dark-grey-1: #2a2c2d
+$dark-grey-2: #282c2d
+$grey: #3a3d3e
+$grey-text: #969c9f
+
+// sizes
+$height-main: 500px
+
+// defaults
+*
+  margin: 0
+  padding: 0
+  box-sizing: border-box
+  font-size: 100%
+  font-family: Helvetica, Arial, sans-serif
+
+.container
+  min-height: 100vh
+  background: $scarlet
+  display: flex
+  justify-content: center
+  align-items: center
+  padding: 20px
+
+  .main
+    display: flex
+    flex-direction: column
+    width: 100%
+    min-width: 320px
+    background: $dark-grey-1
+    padding: 10px
+
+    @media screen and (min-width: 768px)
+      flex-direction: row
+
+    @media screen and (min-width: 1200px)
+      max-width: 1200px
+
+    .items
+      list-style: none
+      margin: 0 0 10px 0
+      color: $grey-text
+      width: 100%
+      height: 50vw
+      min-height: calc( $height-main / 2 )
+      overflow: auto
+
+      @media screen and (min-width: 768px)
+        margin: 0 10px 0 0
+        width: 50%
+        height: $height-main
+
+      .item
+        background: $grey
+        padding: 10px 10px 10px 0
+        transition: background .2s
+
+        &:hover
+          background: $light-grey
+          cursor: pointer
+        
+        &.active
+          background: $light-grey
+          cursor: pointer
+
+        .address
+          margin-left: 10px
+
+        .budgets-list
+          list-style: none
+          margin-top: 10px
+          display: flex
+          flex-wrap: wrap
+          font-size: smaller
+
+          .budgets-list-item
+            margin: 5px 0 0 10px
+            padding: 5px 10px
+            background: $dark-grey-2
+      
+      .item.active
+
+      .item + .item
+        margin-top: 10px
+
+  .map
+    width: 100%
+    height: 50vw
+    min-height: calc( $height-main / 2 )
+    background: #fffda4
+
+    @media screen and (min-width: 768px)
+      width: 50%
+      height: unset
