@@ -17,7 +17,15 @@ const App: React.FC = () => {
   const [activePointIndex, setActivePointIndex] = useState<number>(0);
   const mapElemRef = useRef(null);
   const mapRef = useRef<ymaps.Map>();
-  const ymaps = useYMaps(['Map', 'Placemark'])
+  const ymaps = useYMaps([
+    'Map',
+    'Placemark',
+    'control.ZoomControl',
+    'control.FullscreenControl',
+    'geoObject.addon.balloon',
+    'geoObject.addon.hint',
+    'Clusterer'
+  ])
 
   useEffect(() => {
     if (!ymaps || !mapElemRef.current) return;
@@ -25,26 +33,27 @@ const App: React.FC = () => {
     mapRef.current = new ymaps.Map(mapElemRef.current, {
       center: [points[0].latitude, points[0].longitude],
       zoom: 12,
+      controls: ['zoomControl', 'fullscreenControl']
     }, {
       maxAnimationZoomDifference: 20
     });
 
-    // creating map marks
-    const marks = points.map(({latitude, longitude}, i) => {
-      const mark = new ymaps.Placemark([latitude, longitude], {}, {
+    // creating map marks from points
+    const marks = points.map(({latitude, longitude, address}, i) => {
+      const mark = new ymaps.Placemark([latitude, longitude], {
+        hintContent: address,
+      }, {
         iconLayout: 'default#image',
-        iconImageHref: i === 0 ? 'images/pointer_blue.svg' : 'images/pointer_red.svg'
+        iconImageHref: i === 0 ? pointerHref.active : pointerHref.passive,
+        // @ts-ignore 
+        // ignoring next line, because @types/yandex-maps are not full enough
+        hintOffset: [0, -25],
       });
-      
       return mark;
     })
 
-    // adding marks on the map
+    // adding mark click handler
     marks.forEach((mark, i) => {
-      if (mapRef.current === undefined) return;
-      mapRef.current.geoObjects.add(mark);
-
-      // adding mark click handler
       const {latitude, longitude} = points[i];
       mark.events.add(['click'], (e) => {
         if (mapRef.current === undefined) return;
@@ -64,6 +73,15 @@ const App: React.FC = () => {
         e.get('target').options.set('iconImageHref', pointerHref.active);
       })
     });
+
+    // creating Clusterer
+    const clusterer = new ymaps.Clusterer({
+      preset: 'islands#redClusterIcons'
+    });
+    clusterer.add(marks);
+    // @ts-ignore 
+    // ignoring next line, because @types/yandex-maps are not full enough
+    mapRef.current.geoObjects.add(clusterer);
     
     setMarks(marks);
 
